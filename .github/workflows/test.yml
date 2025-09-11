@@ -1,0 +1,124 @@
+name: FLUX Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8, 3.9, '3.10', 3.11]
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install numpy scipy matplotlib pytest pytest-cov
+        pip install -e .
+    
+    - name: Test core heat solver
+      run: |
+        python test_heat_solver.py
+    
+    - name: Run pytest with coverage
+      run: |
+        pytest tests/ -v --cov=src --cov-report=xml --cov-report=html
+    
+    - name: Benchmark performance
+      run: |
+        python -c "
+        import sys; sys.path.insert(0, 'src')
+        from src.heat_solver import HeatEquationSolver, create_gaussian_initial_condition
+        import time, numpy as np
+        
+        # Quick performance test
+        solver = HeatEquationSolver(50, 50)
+        ic = create_gaussian_initial_condition()
+        u0 = solver.set_initial_condition(ic)
+        
+        start = time.time()
+        _, _, _ = solver.solve(u0, 0.1, 0.001, save_interval=100)
+        elapsed = time.time() - start
+        
+        print(f'Performance: {50*50*100/elapsed:.0f} cell-steps/second')
+        assert elapsed < 5.0  # Should complete in under 5 seconds
+        "
+    
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        fail_ci_if_error: true
+
+  compatibility:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: [3.9]
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install numpy scipy matplotlib
+    
+    - name: Test cross-platform compatibility
+      run: |
+        python test_heat_solver.py
+
+  documentation:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.9
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install numpy scipy matplotlib sphinx sphinx-rtd-theme
+    
+    - name: Test tutorial example
+      run: |
+        # Test that tutorial works (without display)
+        python -c "
+        import sys; sys.path.insert(0, 'src')
+        from src.heat_solver import HeatEquationSolver, create_gaussian_initial_condition
+        import numpy as np
+        
+        # Run tutorial example without display
+        solver = HeatEquationSolver(nx=25, ny=25)  # Smaller for CI
+        gaussian_ic = create_gaussian_initial_condition(x0=0.5, y0=0.5, sigma=0.1, amplitude=100.0)
+        u0 = solver.set_initial_condition(gaussian_ic)
+        
+        t_array, u_final, u_history = solver.solve(u0, 0.1, 0.001, save_interval=50)
+        
+        # Verify tutorial claims
+        assert np.max(u_final) < np.max(u0), 'Heat should diffuse (temperature decrease)'
+        assert np.max(u_final) > 0, 'Temperature should remain positive'
+        
+        print('Tutorial example verified!')
+        "
