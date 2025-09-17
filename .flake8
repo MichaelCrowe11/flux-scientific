@@ -1,0 +1,21 @@
+[flake8]
+max-line-length = 127
+extend-ignore = E203, W503
+exclude =
+    .git,
+    __pycache__,
+    docs,
+    old,
+    build,
+    dist,
+    .pytest_cache,
+    venv,
+    env,
+    output,
+    benchmark_output,
+    cpp_output,
+    cuda_output
+max-complexity = 10
+per-file-ignores =
+    __init__.py:F401
+    tests/*.py:F401,F811

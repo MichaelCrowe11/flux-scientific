@@ -1,0 +1,176 @@
+name: FLUX-Sci CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Test Suite
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ['3.8', '3.9', '3.10', '3.11']
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install numpy scipy matplotlib pytest pytest-cov black flake8 mypy
+        pip install -e .
+    
+    - name: Lint with flake8
+      run: |
+        # Stop build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # Exit-zero treats all errors as warnings
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    
+    - name: Format check with black
+      run: |
+        black --check --diff src/ flux_scientific.py
+    
+    - name: Type check with mypy
+      run: |
+        mypy src/ --ignore-missing-imports
+    
+    - name: Run tests with pytest
+      run: |
+        pytest tests/ -v --cov=src --cov-report=xml --cov-report=term
+    
+    - name: Upload coverage to Codecov
+      if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.10'
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+
+  compile-examples:
+    name: Compile Examples
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install numpy scipy matplotlib
+        pip install -e .
+    
+    - name: Test FLUX compiler with examples
+      run: |
+        echo "Testing heat equation compilation..."
+        python flux_scientific.py examples/heat_equation.flux -b python -o test_output
+        
+        echo "Testing Navier-Stokes compilation..."
+        python flux_scientific.py examples/navier_stokes_cavity.flux -b python -o test_output
+        
+        echo "Testing structural analysis compilation..."
+        python flux_scientific.py examples/structural_analysis.flux -b python -o test_output
+    
+    - name: Test C++ backend
+      run: |
+        echo "Testing C++ code generation..."
+        python flux_scientific.py examples/heat_equation.flux -b cpp -o cpp_output
+        ls -la cpp_output/
+        
+        # Check if C++ files were generated
+        test -f cpp_output/generated.cpp
+        test -f cpp_output/CMakeLists.txt
+        test -f cpp_output/Makefile
+    
+    - name: Test CUDA backend
+      run: |
+        echo "Testing CUDA code generation..."
+        python flux_scientific.py examples/gpu_accelerated_cfd.flux -b cuda -o cuda_output
+        ls -la cuda_output/
+        
+        # Check if CUDA files were generated
+        test -f cuda_output/generated.cu
+        test -f cuda_output/CMakeLists.txt
+
+  benchmark:
+    name: Performance Benchmarks
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install numpy scipy matplotlib
+        pip install -e .
+    
+    - name: Run benchmarks
+      run: |
+        python flux_scientific.py --benchmark
+        python benchmarks/simple_benchmark.py
+    
+    - name: Store benchmark results
+      uses: actions/upload-artifact@v3
+      with:
+        name: benchmark-results
+        path: |
+          benchmark_output/
+          *.png
+
+  build-docs:
+    name: Build Documentation
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    
+    - name: Install doc dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install sphinx sphinx-rtd-theme myst-parser
+        pip install numpy scipy matplotlib
+        pip install -e .
+    
+    - name: Build documentation
+      run: |
+        # Create docs directory if it doesn't exist
+        mkdir -p docs
+        cd docs
+        
+        # Generate API documentation
+        sphinx-apidoc -o source ../src
+        
+        # Build HTML docs
+        # sphinx-build -b html source build
+    
+    - name: Upload documentation
+      uses: actions/upload-artifact@v3
+      with:
+        name: documentation
+        path: docs/build/

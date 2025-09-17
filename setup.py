@@ -8,11 +8,11 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
-    name="flux-scientific",
-    version="0.2.0",
+    name="flux-sci-lang",
+    version="0.1.0",
     author="Michael Crowe",
-    author_email="michael.crowe@flux-scientific.org",
-    description="Production-ready DSL for PDEs with validated finite difference solvers",
+    author_email="michael@flux-sci.org",
+    description="FLUX Scientific Computing Language - Production-ready DSL for PDEs with validated finite difference solvers",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/MichaelCrowe11/flux-scientific",

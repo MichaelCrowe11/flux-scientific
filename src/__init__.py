@@ -3,9 +3,9 @@ FLUX Scientific Computing Language
 A production-ready domain-specific language for scientific computing with validated PDE solvers
 """
 
-__version__ = "0.2.0"
+__version__ = "0.1.0"
 __author__ = "Michael Crowe"
-__email__ = "michael.crowe@flux-scientific.org"
+__email__ = "michael@flux-sci.org"
 
 # Import main components
 from .pde_lexer import FluxPDELexer

@@ -1,103 +1,109 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
+requires = ["setuptools>=45", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "flux-scientific"
-version = "0.2.0"
-authors = [
-    {name = "Michael Crowe", email = "michael.crowe@flux-scientific.org"},
-]
-description = "Production-ready DSL for scientific computing with validated PDE solvers"
+name = "flux-sci-lang"
+version = "0.1.0"
+description = "FLUX Scientific Computing Language - Domain-Specific Language for PDEs, CFD, and Computational Physics"
 readme = "README.md"
 license = {text = "MIT"}
-requires-python = ">=3.8"
+authors = [
+    {name = "Michael Crowe", email = "michael@flux-sci.org"}
+]
+keywords = ["scientific-computing", "PDE", "CFD", "DSL", "computational-physics", "finite-element", "GPU"]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 3 - Alpha",
     "Intended Audience :: Science/Research",
-    "Intended Audience :: Developers",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Topic :: Scientific/Engineering :: Mathematics",
     "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
-    "Topic :: Scientific/Engineering",
-    "Topic :: Scientific/Engineering :: Mathematics",
-    "Topic :: Scientific/Engineering :: Physics",
-    "Topic :: Software Development :: Compilers",
-    "Topic :: Software Development :: Code Generators",
 ]
-keywords = [
-    "scientific-computing",
-    "pde",
-    "partial-differential-equations",
-    "finite-difference",
-    "numerical-methods",
-    "computational-physics",
-    "dsl",
-    "code-generation"
-]
+requires-python = ">=3.8"
 dependencies = [
     "numpy>=1.20.0",
     "scipy>=1.7.0",
     "matplotlib>=3.3.0",
 ]
 
-[project.urls]
-Homepage = "https://github.com/MichaelCrowe11/flux-scientific"
-Documentation = "https://github.com/MichaelCrowe11/flux-scientific#readme"
-Repository = "https://github.com/MichaelCrowe11/flux-scientific"
-"Bug Tracker" = "https://github.com/MichaelCrowe11/flux-scientific/issues"
-
 [project.optional-dependencies]
 dev = [
     "pytest>=7.0",
-    "pytest-cov>=4.0",
+    "pytest-cov>=3.0",
     "black>=22.0",
     "flake8>=5.0",
-    "mypy>=1.0",
-    "ipython>=8.0",
+    "mypy>=0.990",
+    "sphinx>=4.0",
+    "sphinx-rtd-theme>=1.0",
 ]
 gpu = [
-    "cupy>=11.0",
-    "pycuda>=2022.1",
+    "cupy>=10.0",
+    "pycuda>=2021.1",
 ]
-viz = [
-    "plotly>=5.0",
-    "vtk>=9.0",
-]
-docs = [
-    "sphinx>=5.0",
-    "sphinx-rtd-theme>=1.0",
-    "nbsphinx>=0.8",
+hpc = [
+    "mpi4py>=3.0",
+    "h5py>=3.0",
 ]
 
 [project.scripts]
 flux-sci = "flux_scientific:main"
-flux = "flux_scientific:main"
 
-[tool.setuptools]
-package-dir = {"" = "src"}
-packages = ["flux_scientific", "flux_scientific.solvers"]
-
-[tool.setuptools.package-data]
-"*" = ["*.flux", "*.md", "*.txt"]
+[project.urls]
+Homepage = "https://github.com/MichaelCrowe11/flux-sci-lang"
+Documentation = "https://flux-sci-lang.readthedocs.io"
+Repository = "https://github.com/MichaelCrowe11/flux-sci-lang"
+"Bug Tracker" = "https://github.com/MichaelCrowe11/flux-sci-lang/issues"
 
 [tool.black]
-line-length = 100
-target-version = ['py38', 'py39', 'py310', 'py311']
+line-length = 127
+target-version = ["py38", "py39", "py310", "py311"]
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+  | output
+)/
+'''
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+ignore_missing_imports = true
+exclude = [
+    "tests/",
+    "examples/",
+    "benchmarks/",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py", "*_test.py"]
-python_functions = ["test_*"]
-addopts = "-v --cov=flux_scientific --cov-report=html --cov-report=term"
+addopts = "-ra --strict-markers --cov=src"
 
-[tool.mypy]
-python_version = "3.8"
-warn_return_any = true
-warn_unused_configs = true
-disallow_untyped_defs = true
-ignore_missing_imports = true
+[tool.coverage.run]
+source = ["src"]
+omit = ["*/tests/*", "*/benchmarks/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if __name__ == .__main__.:",
+    "raise NotImplementedError",
+    "pass",
+]
