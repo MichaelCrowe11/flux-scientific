@@ -1,11 +1,31 @@
 """
-FLUX Language - Future Language for Universal eXecution
-An AI-native programming language with quantum computing support
+FLUX Scientific Computing Language
+A production-ready domain-specific language for scientific computing with validated PDE solvers
 """
 
-from .lexer import FLUXLexer, Token, TokenType
-from .parser import FLUXParser
-from .interpreter import FLUXInterpreter
+__version__ = "0.2.0"
+__author__ = "Michael Crowe"
+__email__ = "michael.crowe@flux-scientific.org"
 
-__version__ = "0.1.0"
-__all__ = ["FLUXLexer", "FLUXParser", "FLUXInterpreter", "Token", "TokenType"]
+# Import main components
+from .pde_lexer import FluxPDELexer
+from .pde_parser import FluxPDEParser
+from .codegen import BackendManager
+from .heat_solver import HeatEquationSolver
+
+# Import solvers
+from .solvers import (
+    FiniteDifferenceSolver,
+    ValidationSuite,
+    AnalyticalSolutions
+)
+
+__all__ = [
+    "FluxPDELexer",
+    "FluxPDEParser",
+    "BackendManager",
+    "HeatEquationSolver",
+    "FiniteDifferenceSolver",
+    "ValidationSuite",
+    "AnalyticalSolutions",
+]

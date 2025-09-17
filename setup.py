@@ -9,14 +9,15 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="flux-scientific",
-    version="0.1.0",
-    author="FLUX Development Team",
-    author_email="dev@flux-lang.io",
-    description="Domain-Specific Language for PDEs, CFD, and Computational Physics",
+    version="0.2.0",
+    author="Michael Crowe",
+    author_email="michael.crowe@flux-scientific.org",
+    description="Production-ready DSL for PDEs with validated finite difference solvers",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/flux-lang/flux-scientific",
-    packages=find_packages(),
+    url="https://github.com/MichaelCrowe11/flux-scientific",
+    packages=find_packages(where="src"),
+    package_dir={"": "src"},
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Science/Research",

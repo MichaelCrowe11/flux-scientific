@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  flux-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: flux-scientific-dev
+    volumes:
+      - .:/flux
+      - ./workspace:/flux/workspace
+      - ./output:/flux/output
+    ports:
+      - "8888:8888"  # Jupyter
+      - "8000:8000"  # Web server
+    environment:
+      - PYTHONPATH=/flux
+      - FLUX_HOME=/flux
+      - DISPLAY=${DISPLAY:-:0}
+    tty: true
+    stdin_open: true
+    working_dir: /flux
+    command: bash
+
+  flux-jupyter:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: flux-jupyter
+    volumes:
+      - .:/flux
+      - ./workspace:/flux/workspace
+      - ./output:/flux/output
+    ports:
+      - "8888:8888"
+    environment:
+      - PYTHONPATH=/flux
+      - FLUX_HOME=/flux
+    working_dir: /flux
+    command: jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser --allow-root

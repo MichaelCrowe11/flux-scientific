@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from typing import List, Dict, Any, Optional
 from abc import ABC, abstractmethod
 from .pde_parser import *
+from .codegen_python import PythonScientificGenerator
 
 class CodeGenerator(ABC):
     """Base class for code generators"""
@@ -292,79 +293,15 @@ private:
 
 class PythonGenerator(CodeGenerator):
     """Generate Python code from FLUX definitions"""
-    
-    def generate(self, ast_nodes: List[ASTNode]) -> str:
-        code_sections = []
-        
-        # Add imports
-        code_sections.append(self._generate_imports())
-        
-        # Generate classes
-        for node in ast_nodes:
-            if isinstance(node, PDEDefinition):
-                code_sections.append(self._generate_pde_class(node))
-            elif isinstance(node, Mesh):
-                code_sections.append(self._generate_mesh_code(node))
-        
-        return '\n\n'.join(code_sections)
-    
-    def _generate_imports(self) -> str:
-        return """# Auto-generated Python code from FLUX
-import numpy as np
-import scipy.sparse as sp
-from scipy.sparse.linalg import spsolve
-import matplotlib.pyplot as plt
 
-class FluxField:
-    def __init__(self, data, mesh=None):
-        self.data = np.array(data)
-        self.mesh = mesh
+    def __init__(self):
+        # Use the new scientific generator for better code generation
+        self.scientific_gen = PythonScientificGenerator()
+
+    def generate(self, ast_nodes: List[ASTNode]) -> str:
+        # Delegate to the new comprehensive generator
+        return self.scientific_gen.generate(ast_nodes)
     
-    def plot(self, **kwargs):
-        if self.data.ndim == 1:
-            plt.plot(self.data, **kwargs)
-        elif self.data.ndim == 2:
-            plt.contourf(self.data, **kwargs)
-        plt.show()"""
-    
-    def _generate_pde_class(self, pde: PDEDefinition) -> str:
-        """Generate Python class for PDE"""
-        class_name = f"{pde.name.title()}Solver"
-        
-        variables = pde.variables or ["u"]
-        var_init = []
-        for var in variables:
-            var_init.append(f"        self.{var} = FluxField(np.zeros(mesh.num_nodes))")
-        
-        return f"""class {class_name}:
-    def __init__(self, mesh):
-        self.mesh = mesh
-{chr(10).join(var_init)}
-    
-    def solve(self, dt=0.01, num_steps=100):
-        for step in range(num_steps):
-            self._time_step(dt)
-            if step % 10 == 0:
-                print(f"Step {{step}}, time = {{step * dt:.3f}}")
-    
-    def _time_step(self, dt):
-        # TODO: Implement time stepping
-        pass
-    
-    def _apply_boundary_conditions(self):
-        # TODO: Apply boundary conditions
-        pass"""
-    
-    def _generate_mesh_code(self, mesh: Mesh) -> str:
-        """Generate Python mesh class"""
-        return f"""class FluxMesh:
-    def __init__(self, name="{mesh.name}"):
-        self.name = name
-        self.nodes = []
-        self.cells = []
-        self.boundaries = []
-        self.num_nodes = 0
-        self.num_cells = 0"""
 
 class BackendManager:
     """Manages different code generation backends"""
