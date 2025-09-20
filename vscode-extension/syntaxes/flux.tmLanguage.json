@@ -1,0 +1,214 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "FLUX",
+  "scopeName": "source.flux",
+  "patterns": [
+    {"include": "#comments"},
+    {"include": "#keywords"},
+    {"include": "#operators"},
+    {"include": "#numbers"},
+    {"include": "#strings"},
+    {"include": "#functions"},
+    {"include": "#variables"},
+    {"include": "#domains"},
+    {"include": "#equations"},
+    {"include": "#boundaries"},
+    {"include": "#solvers"}
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.flux",
+          "begin": "//",
+          "end": "$"
+        },
+        {
+          "name": "comment.block.flux",
+          "begin": "/\\*",
+          "end": "\\*/"
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.flux",
+          "match": "\\b(domain|equation|boundary|solver|mesh|field|function|let|const|if|else|for|while|return|import|export)\\b"
+        },
+        {
+          "name": "keyword.other.flux",
+          "match": "\\b(heat|wave|poisson|navier_stokes|laplacian|gradient|divergence|curl)\\b"
+        },
+        {
+          "name": "storage.type.flux",
+          "match": "\\b(real|int|bool|vector|matrix|tensor|scalar)\\b"
+        }
+      ]
+    },
+    "operators": {
+      "patterns": [
+        {
+          "name": "keyword.operator.arithmetic.flux",
+          "match": "\\+|\\-|\\*|\\/|\\^|%"
+        },
+        {
+          "name": "keyword.operator.comparison.flux",
+          "match": "==|!=|<|>|<=|>="
+        },
+        {
+          "name": "keyword.operator.logical.flux",
+          "match": "&&|\\|\\||!"
+        },
+        {
+          "name": "keyword.operator.assignment.flux",
+          "match": "=|\\+=|\\-=|\\*=|\\/="
+        },
+        {
+          "name": "keyword.operator.differential.flux",
+          "match": "\\bdt\\b|\\bdx\\b|\\bdy\\b|\\bdz\\b|\\bd2dt\\b|\\bd2dx\\b|\\bd2dy\\b|\\bd2dz\\b"
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.float.flux",
+          "match": "\\b\\d+\\.\\d+([eE][+-]?\\d+)?\\b"
+        },
+        {
+          "name": "constant.numeric.integer.flux",
+          "match": "\\b\\d+\\b"
+        },
+        {
+          "name": "constant.numeric.scientific.flux",
+          "match": "\\b\\d+[eE][+-]?\\d+\\b"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.flux",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.flux",
+              "match": "\\\\."
+            }
+          ]
+        },
+        {
+          "name": "string.quoted.single.flux",
+          "begin": "'",
+          "end": "'",
+          "patterns": [
+            {
+              "name": "constant.character.escape.flux",
+              "match": "\\\\."
+            }
+          ]
+        }
+      ]
+    },
+    "functions": {
+      "patterns": [
+        {
+          "name": "entity.name.function.flux",
+          "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*(?=\\s*\\()"
+        },
+        {
+          "name": "support.function.builtin.flux",
+          "match": "\\b(sin|cos|tan|exp|log|sqrt|abs|min|max|sum|integral|diff|solve)\\b"
+        }
+      ]
+    },
+    "variables": {
+      "patterns": [
+        {
+          "name": "variable.other.flux",
+          "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b"
+        }
+      ]
+    },
+    "domains": {
+      "patterns": [
+        {
+          "name": "entity.name.type.domain.flux",
+          "begin": "\\bdomain\\s+([a-zA-Z_][a-zA-Z0-9_]*)",
+          "beginCaptures": {
+            "1": {"name": "entity.name.type.flux"}
+          },
+          "end": "\\}",
+          "patterns": [
+            {"include": "#comments"},
+            {"include": "#numbers"},
+            {
+              "name": "keyword.other.domain.flux",
+              "match": "\\b(rectangle|circle|sphere|cube|cylinder)\\b"
+            }
+          ]
+        }
+      ]
+    },
+    "equations": {
+      "patterns": [
+        {
+          "name": "entity.name.type.equation.flux",
+          "begin": "\\bequation\\s+([a-zA-Z_][a-zA-Z0-9_]*)",
+          "beginCaptures": {
+            "1": {"name": "entity.name.type.flux"}
+          },
+          "end": "\\}",
+          "patterns": [
+            {"include": "#comments"},
+            {"include": "#operators"},
+            {"include": "#numbers"},
+            {"include": "#variables"}
+          ]
+        }
+      ]
+    },
+    "boundaries": {
+      "patterns": [
+        {
+          "name": "entity.name.type.boundary.flux",
+          "begin": "\\bboundary\\s+([a-zA-Z_][a-zA-Z0-9_]*)",
+          "beginCaptures": {
+            "1": {"name": "entity.name.type.flux"}
+          },
+          "end": "\\}",
+          "patterns": [
+            {"include": "#comments"},
+            {"include": "#numbers"},
+            {
+              "name": "keyword.other.boundary.flux",
+              "match": "\\b(dirichlet|neumann|robin|periodic)\\b"
+            }
+          ]
+        }
+      ]
+    },
+    "solvers": {
+      "patterns": [
+        {
+          "name": "entity.name.type.solver.flux",
+          "begin": "\\bsolver\\s+([a-zA-Z_][a-zA-Z0-9_]*)",
+          "beginCaptures": {
+            "1": {"name": "entity.name.type.flux"}
+          },
+          "end": "\\}",
+          "patterns": [
+            {"include": "#comments"},
+            {"include": "#numbers"},
+            {
+              "name": "keyword.other.solver.flux",
+              "match": "\\b(explicit|implicit|crank_nicolson|adams_bashforth|runge_kutta|finite_difference|finite_element|spectral)\\b"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLUX Scientific Computing - Online PDE Solver</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🔥 FLUX Scientific Computing Language</h1>
+            <p>Domain-Specific Language for PDE Solving</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="tabs">
+            <button class="tab-button active" onclick="showTab('editor')">Code Editor</button>
+            <button class="tab-button" onclick="showTab('solver')">Quick Solve</button>
+            <button class="tab-button" onclick="showTab('docs')">Documentation</button>
+        </div>
+
+        <!-- Code Editor Tab -->
+        <div id="editor-tab" class="tab-content active">
+            <div class="editor-section">
+                <div class="editor-header">
+                    <select id="example-select" onchange="loadExample()">
+                        <option value="">Select Example...</option>
+                        <option value="heat">Heat Equation</option>
+                        <option value="wave">Wave Equation</option>
+                        <option value="poisson">Poisson Equation</option>
+                        <option value="navier_stokes">Navier-Stokes</option>
+                    </select>
+                    <select id="backend-select">
+                        <option value="python">Python</option>
+                        <option value="cpp">C++</option>
+                        <option value="cuda">CUDA</option>
+                        <option value="julia">Julia</option>
+                        <option value="fortran">Fortran</option>
+                    </select>
+                    <button onclick="validateCode()" class="btn btn-secondary">Validate</button>
+                    <button onclick="compileCode()" class="btn btn-primary">Compile</button>
+                </div>
+
+                <div class="editor-container">
+                    <textarea id="code-editor">// Enter your FLUX code here
+domain my_domain {
+    rectangle(0, 1, 0, 1)
+    grid(50, 50)
+}
+
+equation heat_eq {
+    dt(u) = 0.1 * laplacian(u)
+}
+
+boundary my_bc {
+    dirichlet(0.0) on all
+}
+
+solver my_solver {
+    method: crank_nicolson
+    timestep: 0.01
+    max_time: 1.0
+}</textarea>
+                </div>
+
+                <div id="compile-output" class="output-section hidden">
+                    <h3>Compilation Output</h3>
+                    <pre id="generated-code"></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Solve Tab -->
+        <div id="solver-tab" class="tab-content">
+            <div class="solver-section">
+                <h2>Interactive PDE Solver</h2>
+
+                <div class="solver-controls">
+                    <div class="control-group">
+                        <label>PDE Type:</label>
+                        <select id="pde-type">
+                            <option value="heat">Heat Equation</option>
+                            <option value="wave">Wave Equation</option>
+                            <option value="poisson">Poisson Equation</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Grid Size:</label>
+                        <input type="range" id="grid-size" min="20" max="100" value="50">
+                        <span id="grid-size-label">50×50</span>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Initial Condition:</label>
+                        <select id="initial-condition">
+                            <option value="gaussian">Gaussian</option>
+                            <option value="sinusoidal">Sinusoidal</option>
+                            <option value="zero">Zero</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Method:</label>
+                        <select id="method">
+                            <option value="explicit">Explicit</option>
+                            <option value="implicit">Implicit</option>
+                            <option value="crank_nicolson">Crank-Nicolson</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Diffusivity/Speed (α):</label>
+                        <input type="range" id="alpha" min="0.01" max="1" step="0.01" value="0.1">
+                        <span id="alpha-label">0.1</span>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Final Time:</label>
+                        <input type="range" id="time-final" min="0.1" max="5" step="0.1" value="1">
+                        <span id="time-final-label">1.0</span>
+                    </div>
+
+                    <button onclick="solvePDE()" class="btn btn-primary btn-large">Solve PDE</button>
+                </div>
+
+                <div id="solution-output" class="hidden">
+                    <h3>Solution</h3>
+                    <img id="solution-plot" src="" alt="Solution plot">
+                    <div id="solution-stats"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Documentation Tab -->
+        <div id="docs-tab" class="tab-content">
+            <div class="docs-section">
+                <h2>FLUX Language Reference</h2>
+
+                <h3>Basic Structure</h3>
+                <pre><code>domain name {
+    // Define computational domain
+    rectangle(x_min, x_max, y_min, y_max)
+    grid(nx, ny)
+}
+
+equation name {
+    // Define PDE
+    dt(u) = alpha * laplacian(u)
+}
+
+boundary name {
+    // Boundary conditions
+    dirichlet(value) on location
+    neumann(value) on location
+}
+
+solver name {
+    // Solver configuration
+    method: crank_nicolson
+    timestep: 0.01
+    max_time: 1.0
+}</code></pre>
+
+                <h3>Differential Operators</h3>
+                <ul>
+                    <li><code>dt(u)</code> - Time derivative ∂u/∂t</li>
+                    <li><code>dx(u)</code> - Spatial derivative ∂u/∂x</li>
+                    <li><code>dy(u)</code> - Spatial derivative ∂u/∂y</li>
+                    <li><code>laplacian(u)</code> - Laplacian operator ∇²u</li>
+                    <li><code>gradient(u)</code> - Gradient operator ∇u</li>
+                    <li><code>divergence(v)</code> - Divergence operator ∇·v</li>
+                    <li><code>curl(v)</code> - Curl operator ∇×v</li>
+                </ul>
+
+                <h3>Supported PDEs</h3>
+                <ul>
+                    <li><strong>Heat Equation:</strong> ∂u/∂t = α∇²u</li>
+                    <li><strong>Wave Equation:</strong> ∂²u/∂t² = c²∇²u</li>
+                    <li><strong>Poisson Equation:</strong> ∇²φ = -ρ</li>
+                    <li><strong>Navier-Stokes:</strong> Incompressible fluid flow</li>
+                </ul>
+
+                <h3>Numerical Methods</h3>
+                <ul>
+                    <li><strong>Explicit:</strong> Forward Euler method</li>
+                    <li><strong>Implicit:</strong> Backward Euler method</li>
+                    <li><strong>Crank-Nicolson:</strong> 2nd order implicit method</li>
+                    <li><strong>ADI:</strong> Alternating Direction Implicit</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>FLUX Scientific Computing Language |
+               <a href="https://github.com/MichaelCrowe11/flux-sci-lang">GitHub</a> |
+               <a href="https://flux-sci-lang.readthedocs.io">Documentation</a>
+            </p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

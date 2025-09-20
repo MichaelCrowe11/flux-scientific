@@ -97,34 +97,26 @@ class StructuredGrid(Mesh):
                 for i, x in enumerate(x_coords):
                     node_id = self.add_node(x, y, z)
                     node_map[(i, j, k)] = node_id
-        
-        # Create cells
+
+        # Add cells
         for k in range(self.nz):
             for j in range(self.ny):
                 for i in range(self.nx):
-                    if self.nz == 1:
-                        # 2D quadrilateral
+                    if self.nz > 1:  # 3D hexahedron
                         nodes = [
-                            node_map[(i, j, k)],
-                            node_map[(i+1, j, k)],
-                            node_map[(i+1, j+1, k)],
-                            node_map[(i, j+1, k)]
-                        ]
-                        self.add_cell(nodes, "quad")
-                    else:
-                        # 3D hexahedron
-                        nodes = [
-                            node_map[(i, j, k)],     # 0
-                            node_map[(i+1, j, k)],   # 1
-                            node_map[(i+1, j+1, k)], # 2
-                            node_map[(i, j+1, k)],   # 3
-                            node_map[(i, j, k+1)],   # 4
-                            node_map[(i+1, j, k+1)], # 5
-                            node_map[(i+1, j+1, k+1)], # 6
-                            node_map[(i, j+1, k+1)]  # 7
+                            node_map[(i, j, k)], node_map[(i+1, j, k)],
+                            node_map[(i+1, j+1, k)], node_map[(i, j+1, k)],
+                            node_map[(i, j, k+1)], node_map[(i+1, j, k+1)],
+                            node_map[(i+1, j+1, k+1)], node_map[(i, j+1, k+1)]
                         ]
                         self.add_cell(nodes, "hexahedron")
-        
+                    else:  # 2D quadrilateral
+                        nodes = [
+                            node_map[(i, j, k)], node_map[(i+1, j, k)],
+                            node_map[(i+1, j+1, k)], node_map[(i, j+1, k)]
+                        ]
+                        self.add_cell(nodes, "quad")
+
         # Add boundaries
         self._create_boundaries(node_map)
     

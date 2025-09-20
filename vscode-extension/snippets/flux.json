@@ -1,0 +1,164 @@
+{
+  "Heat Equation": {
+    "prefix": "heat",
+    "body": [
+      "// Heat equation solver",
+      "domain ${1:heat_domain} {",
+      "    rectangle(0, ${2:1}, 0, ${3:1})",
+      "    grid(${4:50}, ${5:50})",
+      "}",
+      "",
+      "equation heat_eq {",
+      "    dt(${6:u}) = ${7:alpha} * laplacian(${6:u})",
+      "}",
+      "",
+      "boundary ${8:heat_bc} {",
+      "    dirichlet(${9:0.0}) on left, right, top, bottom",
+      "}",
+      "",
+      "solver heat_solver {",
+      "    method: ${10|explicit,implicit,crank_nicolson|}",
+      "    timestep: ${11:0.001}",
+      "    max_time: ${12:1.0}",
+      "}"
+    ],
+    "description": "Heat equation template"
+  },
+  "Wave Equation": {
+    "prefix": "wave",
+    "body": [
+      "// Wave equation solver",
+      "domain ${1:wave_domain} {",
+      "    rectangle(0, ${2:1}, 0, ${3:1})",
+      "    grid(${4:100}, ${5:100})",
+      "}",
+      "",
+      "equation wave_eq {",
+      "    d2dt(${6:u}) = ${7:c}^2 * laplacian(${6:u})",
+      "}",
+      "",
+      "boundary ${8:wave_bc} {",
+      "    ${9|dirichlet,neumann|}(${10:0.0}) on all",
+      "}",
+      "",
+      "solver wave_solver {",
+      "    method: explicit",
+      "    timestep: ${11:0.0001}",
+      "    max_time: ${12:2.0}",
+      "}"
+    ],
+    "description": "Wave equation template"
+  },
+  "Poisson Equation": {
+    "prefix": "poisson",
+    "body": [
+      "// Poisson equation solver",
+      "domain ${1:poisson_domain} {",
+      "    rectangle(0, ${2:1}, 0, ${3:1})",
+      "    grid(${4:50}, ${5:50})",
+      "}",
+      "",
+      "equation poisson_eq {",
+      "    laplacian(${6:phi}) = ${7:rho}",
+      "}",
+      "",
+      "boundary ${8:poisson_bc} {",
+      "    dirichlet(${9:0.0}) on all",
+      "}",
+      "",
+      "solver poisson_solver {",
+      "    method: ${10|jacobi,gauss_seidel,conjugate_gradient|}",
+      "    tolerance: ${11:1e-6}",
+      "    max_iterations: ${12:1000}",
+      "}"
+    ],
+    "description": "Poisson equation template"
+  },
+  "Navier-Stokes": {
+    "prefix": "navier",
+    "body": [
+      "// Navier-Stokes equations (incompressible)",
+      "domain ${1:flow_domain} {",
+      "    rectangle(0, ${2:1}, 0, ${3:1})",
+      "    grid(${4:64}, ${5:64})",
+      "}",
+      "",
+      "equation momentum_x {",
+      "    dt(${6:u}) + ${6:u}*dx(${6:u}) + ${7:v}*dy(${6:u}) = -dx(${8:p})/rho + nu*laplacian(${6:u})",
+      "}",
+      "",
+      "equation momentum_y {",
+      "    dt(${7:v}) + ${6:u}*dx(${7:v}) + ${7:v}*dy(${7:v}) = -dy(${8:p})/rho + nu*laplacian(${7:v})",
+      "}",
+      "",
+      "equation continuity {",
+      "    dx(${6:u}) + dy(${7:v}) = 0",
+      "}",
+      "",
+      "boundary ${9:flow_bc} {",
+      "    dirichlet(${10:1.0}, ${11:0.0}) on top    // lid velocity",
+      "    dirichlet(${12:0.0}, ${13:0.0}) on bottom, left, right",
+      "}",
+      "",
+      "solver navier_solver {",
+      "    method: fractional_step",
+      "    timestep: ${14:0.001}",
+      "    reynolds: ${15:100}",
+      "}"
+    ],
+    "description": "Navier-Stokes equations template"
+  },
+  "Domain Definition": {
+    "prefix": "domain",
+    "body": [
+      "domain ${1:my_domain} {",
+      "    ${2|rectangle,circle,sphere,cube|}(${3:args})",
+      "    grid(${4:nx}, ${5:ny})",
+      "    ${6:// Additional domain properties}",
+      "}"
+    ],
+    "description": "Domain definition template"
+  },
+  "Boundary Conditions": {
+    "prefix": "boundary",
+    "body": [
+      "boundary ${1:my_boundary} {",
+      "    ${2|dirichlet,neumann,robin|}(${3:value}) on ${4|left,right,top,bottom,all|}",
+      "    ${5:// Additional boundary conditions}",
+      "}"
+    ],
+    "description": "Boundary conditions template"
+  },
+  "Solver Configuration": {
+    "prefix": "solver",
+    "body": [
+      "solver ${1:my_solver} {",
+      "    method: ${2|explicit,implicit,crank_nicolson,runge_kutta|}",
+      "    timestep: ${3:0.001}",
+      "    ${4|max_time,max_iterations|}: ${5:1.0}",
+      "    ${6:tolerance: 1e-6}",
+      "}"
+    ],
+    "description": "Solver configuration template"
+  },
+  "Field Declaration": {
+    "prefix": "field",
+    "body": [
+      "field ${1:scalar} ${2:field_name} {",
+      "    initial: ${3:0.0}",
+      "    ${4:// Additional field properties}",
+      "}"
+    ],
+    "description": "Field declaration template"
+  },
+  "Function Definition": {
+    "prefix": "function",
+    "body": [
+      "function ${1:real} ${2:function_name}(${3:args}) {",
+      "    ${4:// Function body}",
+      "    return ${5:result};",
+      "}"
+    ],
+    "description": "Function definition template"
+  }
+}

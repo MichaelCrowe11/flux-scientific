@@ -1,5 +1,9 @@
+# Git
 .git
 .github
+.gitignore
+
+# Python
 __pycache__
 *.pyc
 *.pyo
@@ -20,16 +24,22 @@ wheels
 *.egg-info
 .installed.cfg
 *.egg
+venv/
+.venv/
 
+# Testing
 .pytest_cache
 .coverage
 htmlcov
+.tox/
 
+# Node/JS (for VS Code extension)
 node_modules
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# IDE
 .DS_Store
 .vscode
 .idea
@@ -37,7 +47,31 @@ yarn-error.log*
 *.swo
 *~
 
+# Output/temporary files
 output
+benchmark_output
 workspace/*.png
 workspace/*.pdf
 workspace/*.log
+*.tmp
+*.cache
+temp/
+tmp/
+
+# Documentation build
+docs/_build/
+
+# VS Code Extension (not needed for web)
+vscode-extension/
+
+# Jupyter checkpoints
+.ipynb_checkpoints
+*.ipynb_checkpoints
+
+# Environment files
+.env
+.env.local
+*.local
+
+# Fly.io
+fly.toml.backup

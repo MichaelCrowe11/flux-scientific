@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 """
-Working Heat Equation Example for FLUX
-Demonstrates that FLUX can actually solve real PDEs!
+Working Heat Equation Solver
+This demonstrates what FLUX should generate for the heat equation example
 """
 
-import sys
-import os
 import numpy as np
+import scipy.sparse as sp
+import scipy.sparse.linalg as spla
 import matplotlib.pyplot as plt
+from dataclasses import dataclass
+import time
 
 # Add FLUX src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))

@@ -1,0 +1,160 @@
+/* Custom CSS for FLUX Documentation */
+
+/* Brand colors */
+:root {
+    --flux-primary: #2980B9;
+    --flux-secondary: #3498DB;
+    --flux-accent: #E74C3C;
+    --flux-success: #27AE60;
+    --flux-warning: #F39C12;
+    --flux-dark: #2C3E50;
+    --flux-light: #ECF0F1;
+}
+
+/* Logo styling */
+.wy-side-nav-search .wy-dropdown > a img.logo {
+    width: auto;
+    height: 30px;
+    margin-bottom: 0.5em;
+}
+
+/* Code blocks with FLUX syntax highlighting */
+.highlight-flux .highlight {
+    background: #f8f8f8;
+    border-left: 4px solid var(--flux-primary);
+    padding: 10px;
+    margin: 10px 0;
+}
+
+/* Mathematical expressions */
+.math {
+    color: var(--flux-dark);
+    font-family: 'Computer Modern', 'Times New Roman', serif;
+}
+
+/* Admonitions styling */
+.admonition {
+    border-radius: 4px;
+    border-left: 4px solid #ddd;
+    margin: 1em 0;
+    padding: 12px;
+}
+
+.admonition.note {
+    border-left-color: var(--flux-primary);
+    background-color: #f0f7ff;
+}
+
+.admonition.warning {
+    border-left-color: var(--flux-warning);
+    background-color: #fff9e6;
+}
+
+.admonition.tip {
+    border-left-color: var(--flux-success);
+    background-color: #f0fff4;
+}
+
+/* Code snippet improvements */
+.rst-content .highlight > pre {
+    background: #f8f8f8;
+    border: 1px solid #e1e4e5;
+    border-radius: 3px;
+    padding: 12px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Table styling */
+.rst-content table.docutils {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.rst-content table.docutils thead {
+    background: var(--flux-primary);
+    color: white;
+}
+
+.rst-content table.docutils th {
+    background: var(--flux-primary);
+    color: white;
+    border: none;
+}
+
+/* Navigation improvements */
+.wy-nav-content-wrap {
+    background: white;
+}
+
+.wy-nav-content {
+    max-width: 1200px;
+}
+
+/* Responsive images */
+.rst-content img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Button styling for examples */
+.btn-example {
+    display: inline-block;
+    padding: 8px 16px;
+    background: var(--flux-secondary);
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    margin: 4px;
+    transition: background 0.3s;
+}
+
+.btn-example:hover {
+    background: var(--flux-primary);
+    color: white;
+    text-decoration: none;
+}
+
+/* Code language labels */
+.code-block-caption {
+    background: var(--flux-dark);
+    color: white;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 3px 3px 0 0;
+    margin-bottom: 0;
+}
+
+/* Equation numbering */
+.math-number {
+    float: right;
+    margin-top: 0.5em;
+    color: var(--flux-primary);
+    font-weight: bold;
+}
+
+/* Footer improvements */
+.rst-footer-buttons {
+    margin-top: 3em;
+    padding-top: 2em;
+    border-top: 1px solid #e1e4e5;
+}
+
+/* Search highlighting */
+.highlighted {
+    background-color: #ffeb3b;
+    padding: 2px 4px;
+    border-radius: 2px;
+}
+
+/* Mobile responsiveness */
+@media screen and (max-width: 768px) {
+    .wy-nav-content {
+        padding: 1.618em 1em;
+    }
+
+    .rst-content .highlight > pre {
+        padding: 8px;
+        font-size: 12px;
+    }
+}

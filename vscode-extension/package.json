@@ -1,0 +1,169 @@
+{
+  "name": "flux-sci-lang",
+  "displayName": "FLUX Scientific Computing Language",
+  "description": "Language support for FLUX - Domain-Specific Language for Scientific Computing and PDE solving",
+  "version": "0.1.0",
+  "publisher": "flux-sci-lang",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Snippets",
+    "Other"
+  ],
+  "keywords": [
+    "flux",
+    "scientific computing",
+    "pde",
+    "numerical methods",
+    "finite difference",
+    "cfd"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "flux",
+        "aliases": ["FLUX", "flux"],
+        "extensions": [".flux"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "flux",
+        "scopeName": "source.flux",
+        "path": "./syntaxes/flux.tmLanguage.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "flux.compile",
+        "title": "Compile FLUX File",
+        "category": "FLUX"
+      },
+      {
+        "command": "flux.compileAndRun",
+        "title": "Compile and Run FLUX File",
+        "category": "FLUX"
+      },
+      {
+        "command": "flux.validate",
+        "title": "Validate FLUX Syntax",
+        "category": "FLUX"
+      },
+      {
+        "command": "flux.showAST",
+        "title": "Show Abstract Syntax Tree",
+        "category": "FLUX"
+      },
+      {
+        "command": "flux.benchmark",
+        "title": "Run FLUX Benchmarks",
+        "category": "FLUX"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "when": "resourceExtname == .flux",
+          "command": "flux.compile",
+          "group": "flux"
+        },
+        {
+          "when": "resourceExtname == .flux",
+          "command": "flux.compileAndRun",
+          "group": "flux"
+        },
+        {
+          "when": "resourceExtname == .flux",
+          "command": "flux.validate",
+          "group": "flux"
+        }
+      ],
+      "explorer/context": [
+        {
+          "when": "resourceExtname == .flux",
+          "command": "flux.compile",
+          "group": "flux"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "flux.compile",
+        "key": "f5",
+        "when": "resourceExtname == .flux"
+      },
+      {
+        "command": "flux.compileAndRun",
+        "key": "ctrl+f5",
+        "when": "resourceExtname == .flux"
+      }
+    ],
+    "configuration": {
+      "title": "FLUX",
+      "properties": {
+        "flux.compiler.backend": {
+          "type": "string",
+          "enum": ["python", "cpp", "cuda", "julia", "fortran"],
+          "default": "python",
+          "description": "Default compilation backend"
+        },
+        "flux.compiler.optimization": {
+          "type": "string",
+          "enum": ["O0", "O1", "O2", "O3"],
+          "default": "O2",
+          "description": "Optimization level"
+        },
+        "flux.compiler.outputDirectory": {
+          "type": "string",
+          "default": "output",
+          "description": "Default output directory for compiled code"
+        },
+        "flux.validation.onSave": {
+          "type": "boolean",
+          "default": true,
+          "description": "Validate FLUX syntax on file save"
+        },
+        "flux.python.path": {
+          "type": "string",
+          "default": "python",
+          "description": "Path to Python interpreter for FLUX compiler"
+        }
+      }
+    },
+    "snippets": [
+      {
+        "language": "flux",
+        "path": "./snippets/flux.json"
+      }
+    ]
+  },
+  "activationEvents": [
+    "onLanguage:flux"
+  ],
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "16.x",
+    "@types/vscode": "^1.74.0",
+    "typescript": "^4.9.4"
+  },
+  "dependencies": {
+    "child_process": "^1.0.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MichaelCrowe11/flux-sci-lang.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MichaelCrowe11/flux-sci-lang/issues"
+  },
+  "homepage": "https://github.com/MichaelCrowe11/flux-sci-lang#readme",
+  "license": "MIT"
+}

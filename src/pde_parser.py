@@ -96,8 +96,56 @@ class Domain(ASTNode):
     parameters: Dict[str, Any]
 
 @dataclass
-class Mesh(ASTNode):
+class MeshDefinition(ASTNode):
     name: str
+    type: str
+    parameters: Dict[str, Any]
+
+@dataclass
+class SolverDefinition(ASTNode):
+    name: str
+    method: str
+    parameters: Dict[str, Any]
+
+@dataclass
+class KernelDefinition(ASTNode):
+    name: str
+    parameters: List['Parameter']
+    body: List[ASTNode]
+    decorators: Optional[List[str]] = None
+
+@dataclass
+class Parameter(ASTNode):
+    name: str
+    type: str
+
+@dataclass
+class Assignment(ASTNode):
+    target: str
+    value: Expression
+
+@dataclass
+class VectorField(Expression):
+    components: List[Expression]
+
+@dataclass
+class TensorField(Expression):
+    components: List[List[Expression]]
+
+@dataclass
+class CrossProduct(Expression):
+    left: Expression
+    right: Expression
+
+@dataclass
+class DotProduct(Expression):
+    left: Expression
+    right: Expression
+
+@dataclass
+class TensorProduct(Expression):
+    left: Expression
+    right: Expression
     type: str
     domain: str
     parameters: Dict[str, Any]
