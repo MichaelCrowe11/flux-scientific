@@ -15,19 +15,17 @@ RUN apt-get update && apt-get install -y \
 # Set working directory
 WORKDIR /app
 
-# Copy requirements first for better caching
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Install Flask and production server
-RUN pip install --no-cache-dir \
-    flask \
-    gunicorn \
-    matplotlib \
-    requests
-
 # Copy the entire project
 COPY . .
+
+# Install dependencies
+RUN pip install --no-cache-dir \
+    numpy>=1.18.0 \
+    scipy>=1.5.0 \
+    matplotlib>=3.3.0 \
+    flask>=2.0.0 \
+    gunicorn>=20.1.0 \
+    requests>=2.25.0
 
 # Install FLUX package
 RUN pip install -e .
@@ -47,5 +45,5 @@ EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
     CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')" || exit 1
 
-# Run with gunicorn for production
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "2", "--threads", "4", "--timeout", "120", "web_app:app"]
+# Run with gunicorn for production (using full web app)
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "2", "--threads", "4", "--timeout", "120", "web_app_full:app"]
