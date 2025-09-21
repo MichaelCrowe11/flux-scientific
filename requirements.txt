@@ -1,0 +1,13 @@
+# FLUX Scientific Computing Language - Core Dependencies
+
+# Core scientific computing
+numpy>=1.18.0
+scipy>=1.5.0
+matplotlib>=3.3.0
+
+# Web application
+flask>=2.0.0
+gunicorn>=20.1.0
+
+# Additional dependencies
+requests>=2.25.0
